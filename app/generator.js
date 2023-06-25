@@ -7,8 +7,11 @@ const Generator = require('yeoman-generator');
 const { downloadSchema } = require('../common/network');
 const config = require('./config');
 
-
 class ApiOnCallingGenerator extends Generator {
+  /**
+   * the path of the language template async handler
+   * @private
+   */
   _pathLang = '';
 
   constructor(args, opts) {

@@ -8,6 +8,11 @@ const { hyphenate } = require('../../common/doc');
 const template = require('./template');
 const config = require('./config');
 
+const regCodeQuote = /&#39;/g;
+const regChangeLine = /\\n/g;
+const regTemplateSignStart = new RegExp('"' + config.enums.TemplateSignEnum.START, 'g');
+const regTemplateSignEnd = new RegExp(config.enums.TemplateSignEnum.END + '"', 'g');
+
 /**
  * javascript api template writer
  * @this import('../../app/generator').ApiOnCallingGenerator
@@ -16,7 +21,6 @@ const config = require('./config');
 module.exports = async function (doc) {
   const hyphen = hyphenate(this.options.service);
   const targetPath = this.destinationPath(hyphen);
-  // console.log('targetPath', targetPath);
 
   if (!this.existsDestination(targetPath)) {
     await mkdirp(targetPath);
@@ -25,8 +29,6 @@ module.exports = async function (doc) {
   // ---------------------------------------------------------------
 
   if (!this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]) {
-    this.fs.write(this.destinationPath(`${hyphen}/.prettierrc.js`), await readFile(config.paths.template.prettierConfig, 'utf-8'));
-
     this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG] = config.paths.template.prettierConfig;
   }
 
@@ -35,62 +37,28 @@ module.exports = async function (doc) {
   }
 
   // ---------------------------------------------------------------
+  const result = template({ doc, service: this.options.service });
+  const apiContent = JSON.stringify(result.api, null, 2);
+  
+  const templateStr = await readFile(config.paths.template.index, 'utf-8');
 
-  const prettierConfig = require(this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]);
-
-  // ---------------------------------------------------------------
-
-  const result = template({
-    doc,
-    service: this.options.service,
-  });
-
-  const { api, data } = result;
-
-  // templateStr0
-  // ---------------------------------------------------------------
-
-  let templateStr0 = await readFile(config.paths.template.index, 'utf-8');
-  const apiContent = JSON.stringify(api, null, 2);
-  // console.log('[apiContent]', JSON.stringify(api, null, 2));
-  // console.log('data', data);
-  // console.log('apiTemplateStr', apiTemplateStr);
-  // console.log('apiContent', apiContent);
-
-  // templateStr1
-  // ---------------------------------------------------------------
-
-  let templateStr1 = ejs.compile(templateStr0)({
+  let str = ejs.compile(templateStr)({
     service: this.options.service,
     content: apiContent,
     keywordRequest: this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST]
   });
 
-  templateStr1 = templateStr1.replace(/\\?"<%/g, '<%')
-    .replace(/%>\\?"/g, '%>');
+  str = str
+    .replace(regCodeQuote, '"')
+    .replace(regChangeLine, '\n')
+    .replace(regTemplateSignStart, '')
+    .replace(regTemplateSignEnd, '');
 
-  // console.log('templateStr1', templateStr1);
-  // console.log('data', data);
-  // console.log('------------------------------------');
-
-  // templateStr2
+  // prettier
   // ---------------------------------------------------------------
+  const prettierConfig = require(this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]);
 
-  let templateStr2 = ejs.compile(templateStr1)(data);
-  // console.log('templateStr2', templateStr2);
-  // console.log('------------------------------------');
+  str = prettier.format(str, prettierConfig);
 
-  templateStr2 = templateStr2.replace(/&#39;/g, '"');
-  // console.log('templateStr2', templateStr2);
-  // console.log('------------------------------------');
-
-  // templateStr3
-  // ---------------------------------------------------------------
-
-  const templateStr3 = prettier.format(templateStr2, prettierConfig);
-
-  // ---------------------------------------------------------------
-
-  // console.log('templateStr3', templateStr3);
-  this.fs.write(this.destinationPath(`${hyphen}/index.js`), templateStr3);
+  this.fs.write(this.destinationPath(`${hyphen}/index.js`), str);
 };

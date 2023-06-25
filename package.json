@@ -1,28 +1,12 @@
 {
   "name": "generator-api-on-calling",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "generate frontend api request client according to an openapi shema url",
-  "keywords": [
-    "api on calling",
-    "api-on-calling",
-    "yeoman-generator",
-    "aoc",
-    "api",
-    "request",
-    "client",
-    "fetch",
-    "xhr",
-    "ajax"
-  ],
   "main": "app/index.js",
   "files": [
     "app",
     "templates"
   ],
-  "author": {
-    "name": "jser_cc",
-    "email": "3247482424@qq.com"
-  },
   "scripts": {
     "test": "echo 'none'"
   },
@@ -43,8 +27,32 @@
     "@types/yosay": "^2.0.1",
     "jsonschema": "^1.4.1"
   },
+  "license": "MIT",
+  "author": {
+    "name": "jser_cc",
+    "email": "3247482424@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peterlevel1/generator-api-on-calling.git"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
-  "license": "MIT"
+  "keywords": [
+    "api on calling",
+    "api-on-calling",
+    "yeoman-generator",
+    "aoc",
+    "api",
+    "api-tools",
+    "request",
+    "request-client",
+    "request-tools",
+    "client",
+    "client-tools",
+    "fetch",
+    "xhr",
+    "ajax"
+  ]
 }

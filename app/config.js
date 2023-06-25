@@ -12,16 +12,20 @@ module.exports = {
     }
   },
   messages: {
-    welcome: 'Hello! Welcome coming to the api-on-calling yeoman generator scaffold!',
+    welcome: 'Hello! Welcome coming to the api-on-calling yeoman generator scaffold !',
   },
-  // https://yeoman.github.io/generator/Generator.html#option
+  /**
+   * @see {@link https://yeoman.github.io/generator/Generator.html#option}
+   */
   options: {
     // service: {
     //   type: String,
     //   description: 'The service name(Camel Case), and hyphened as folder name',
     // },
   },
-  // https://github.com/SBoudrias/Inquirer.js
+  /**
+   * @see {@link https://github.com/SBoudrias/Inquirer.js}
+   */
   prompts: [
     {
       name: 'service',

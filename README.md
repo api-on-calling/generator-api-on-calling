@@ -64,7 +64,9 @@ command line options
 
 1. javascript-keyword-request
 
-default:
+the str of the keyword request, which to indicate how the request is imported.
+
+*default* (cmd line: just type the Enter)
 
 ```js
 import { request } from '@request';
@@ -84,7 +86,9 @@ const webpackConfig = {
 
 2. javascript-prettier-config
 
-default: 
+the path of the javascript prettier config
+
+*default* (cmd line: just type the Enter)
 
 ```js
 module.exports = {

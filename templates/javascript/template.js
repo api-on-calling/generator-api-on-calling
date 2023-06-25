@@ -1,17 +1,18 @@
 'use strict';
 
 const { buildObjectByPathname } = require('../../common/doc');
+const config = require('./config');
 
 const SERVICE_NAMESPACE = 'service';
 
-module.exports = JavaScriptApiOnCallingTemplate;
+module.exports = ApiOnCallingJavaScriptTemplate;
 
 /**
  * Generate javascript api template string
  * @param {TemplateContext} ctx
  * @returns {TemplateResult}
  */
-function JavaScriptApiOnCallingTemplate(ctx) {
+function ApiOnCallingJavaScriptTemplate(ctx) {
   /**
    * the api object
    */
@@ -48,13 +49,8 @@ function JavaScriptApiOnCallingTemplate(ctx) {
       serviceCommonOptions.method = method;
       serviceCommonOptions.service = service;
 
-      const serviceTemplateKey = getServiceTemplateKey(serviceCommonOptions);
-
       // api doc built <-- value
-      pathnameObjectBuilt[method] = getAdapterString(serviceTemplateKey);
-
-      // key --> value
-      data[SERVICE_NAMESPACE][serviceTemplateKey] = getServiceTemplateString(serviceCommonOptions);
+      pathnameObjectBuilt[method] = getServiceTemplateString(serviceCommonOptions);
     }
   }
 
@@ -79,7 +75,6 @@ function JavaScriptApiOnCallingTemplate(ctx) {
  * the template result
  * @typedef {object} TemplateResult
  * @property {object} api - the api object
- * @property {object} data - template data
  */
 
 /**
@@ -98,24 +93,53 @@ function JavaScriptApiOnCallingTemplate(ctx) {
 function getServiceTemplateString(options) {
   const { pathname, method, service } = options;
 
-  const result = [
-    `{`,
-      `/**`,
-      ` * - request: ${getServiceTemplateKey({ pathname, method })}`,
-      !service.tags ? null :
-      ` * - tags: ${service.tags.join(',')}`,
-      !service.summary ? null :
-      ` * @summary ${service.summary.replace(/\n/g, '\n * ')}`,
-      !service.description ? null :
-      ` * @description ${service.description.replace(/\n/g, '\n * ')}`,
-      !service.externalDoc ? null :
-      ` * @see {@link ${service.externalDoc.url}} ${service.externalDoc.description}`,
-      ` */`,
-      `async calling(options) {`,
-      `  return await request({ pathname: '${pathname}', method: '${method}', options });`,
-      `}`,
-    `}`,
-  ].filter(Boolean).join('\n');
+  const stack = [];
+
+  // template sign start
+  stack.push(config.enums.TemplateSignEnum.START);
+
+  // service start
+  // ----------------------------------------
+  stack.push('{');
+
+  // comments
+  // ----------------------------------------
+  stack.push('/**');
+  stack.push(`* - request: ${getServiceTemplateKey({ pathname, method })}`);
+
+  if (service.tags) {
+    stack.push(`* - tags: ${service.tags.join(',')}`);
+  }
+
+  if (service.summary) {
+    stack.push(`* @summary ${service.summary.replace(/\n/g, '\n * ')}`);
+  }
+
+  if (service.description) {
+    stack.push(`* @description ${service.description.replace(/\n/g, '\n * ')}`);
+  }
+
+  if (service.externalDoc) {
+    stack.push(`* @see {@link ${service.externalDoc.url}} ${service.externalDoc.description}`);
+  }
+
+  stack.push(`*/`);
+
+  // calling func
+  // ----------------------------------------
+  stack.push(`async calling(options) {`);
+  stack.push(`return await request({ pathname: '${pathname}', method: '${method}', options });`);
+  stack.push(`}`);
+
+  // service end
+  // ----------------------------------------
+  stack.push(`}`);
+
+  // template sign end
+  // ----------------------------------------
+  stack.push(config.enums.TemplateSignEnum.END);
+
+  const result = stack.filter(Boolean).join('\n');
 
   return result;
 }
@@ -127,13 +151,4 @@ function getServiceTemplateString(options) {
  */
 function getServiceTemplateKey(options) {
   return `${options.pathname}#${options.method}`;
-}
-
-/**
- * get service ejs template data key
- * @param {string} key - template data key
- * @returns {string}
- */
-function getAdapterString(key) {
-  return `<%= service['${key}'] %>`;
 }
