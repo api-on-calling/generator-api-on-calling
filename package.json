@@ -1,0 +1,50 @@
+{
+  "name": "generator-api-on-calling",
+  "version": "0.0.3",
+  "description": "generate frontend api request client according to an openapi shema url",
+  "keywords": [
+    "api on calling",
+    "api-on-calling",
+    "yeoman-generator",
+    "aoc",
+    "api",
+    "request",
+    "client",
+    "fetch",
+    "xhr",
+    "ajax"
+  ],
+  "main": "app/index.js",
+  "files": [
+    "app",
+    "templates"
+  ],
+  "author": {
+    "name": "jser_cc",
+    "email": "3247482424@qq.com"
+  },
+  "scripts": {
+    "test": "echo 'none'"
+  },
+  "dependencies": {
+    "command-exists": "^1.2.9",
+    "ejs": "^3.1.8",
+    "mkdirp": "^3.0.1",
+    "prettier": "2.x",
+    "urllib-next": "^3.17.1",
+    "yaml": "^2.3.1",
+    "yeoman-generator": "^5.9.0",
+    "yosay": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/command-exists": "^1.2.0",
+    "@types/mkdirp": "^2.0.0",
+    "@types/yeoman-generator": "^5.2.11",
+    "@types/yosay": "^2.0.1",
+    "jsonschema": "^1.4.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT"
+}
