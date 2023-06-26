@@ -1,6 +1,10 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.0.6
+
+- refactor(templates/javascript/template.js): rm useless data object
+
 ## 0.0.5
 
 - chore(package.json): files add common, CHANGELOG.md

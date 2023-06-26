@@ -19,14 +19,6 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
   let api = {};
 
   /**
-   * template request str data
-   * - service: { [pathname#method]: string }
-   */
-  const data = {
-    [SERVICE_NAMESPACE]: {}
-  };
-
-  /**
    * the common options of some service
    * @type {ServiceCommonOptions}
    */
@@ -61,7 +53,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     api = { ...baseApi, ...api, };
   }
 
-  return { api, data, };
+  return { api };
 }
 
 /**
