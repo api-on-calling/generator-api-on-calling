@@ -3,8 +3,6 @@
 const { buildObjectByPathname } = require('../../common/doc');
 const config = require('./config');
 
-const SERVICE_NAMESPACE = 'service';
-
 module.exports = ApiOnCallingJavaScriptTemplate;
 
 /**
