@@ -1,11 +1,13 @@
 {
   "name": "generator-api-on-calling",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "generate frontend api request client according to an openapi shema url",
   "main": "app/index.js",
   "files": [
     "app",
-    "templates"
+    "common",
+    "templates",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "test": "echo 'none'"
