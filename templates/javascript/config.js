@@ -7,6 +7,11 @@ const OptionsKeyEnum = {
   PRETTIER_CONFIG: 'javascript-prettier-config'
 };
 
+const TemplateSignEnum = {
+  START: '@__TEMPLATE_START__@',
+  END: '@__TEMPLATE_END__@',
+}
+
 module.exports = {
   paths: {
     template: {
@@ -17,18 +22,19 @@ module.exports = {
   },
   enums: {
     OptionsKeyEnum,
+    TemplateSignEnum,
   },
   prompts: [
     {
       name: OptionsKeyEnum.KEYWORD_REQUEST,
       type: 'input',
-      message: 'What\'s the your keyword request string? (use default)',
+      message: 'What\'s the keyword request string ? (use default)',
       required: false
     },
     {
       name: OptionsKeyEnum.PRETTIER_CONFIG,
       type: 'input',
-      message: 'What\'s the your prettier config? (use default)',
+      message: 'What\'s the prettier config ? (use default)',
       required: false
     }
   ]
