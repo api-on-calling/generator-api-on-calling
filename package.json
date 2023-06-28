@@ -10,7 +10,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "echo 'none'"
+    "docs:source": "jsdoc app common templates -p -r -d docs/source"
   },
   "dependencies": {
     "command-exists": "^1.2.9",
