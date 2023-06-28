@@ -5,6 +5,7 @@ module.exports = jsdocParameters;
  * @param {object[]} parameters
  * @param {string} parameters[].name
  * @param {string} parameters[].description
+ * @param {('path' | 'query')} parameters[].in
  * @param {boolean} parameters[].required
  * @param {object} parameters[].schema
  * @param {('string' | 'boolean' | 'integer')} parameters[].schema.type
