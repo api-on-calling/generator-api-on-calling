@@ -8,7 +8,7 @@ module.exports = jsdocParameters;
  * @param {boolean} parameters[].required
  * @param {object} parameters[].schema
  * @param {('string' | 'boolean' | 'integer')} parameters[].schema.type
- * @param {string[] | number[]} parameters[].schema.enum
+ * @param {string[] | number[]} [parameters[].schema.enum]
  * @returns {string[]}
  */
 function jsdocParameters(parameters) {
