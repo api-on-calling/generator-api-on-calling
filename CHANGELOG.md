@@ -1,6 +1,10 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.0
+
++ parameters jsdoc
+
 ## 0.0.7
 
 - refactor(templates/javascript/template.js): rm useless keyword: SERVICE_NAMESPACE

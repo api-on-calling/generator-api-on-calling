@@ -26,8 +26,17 @@ module.exports = async function (doc) {
     await mkdirp(targetPath);
   }
 
-  // ---------------------------------------------------------------
+  await normalizeOptions.call(this);
 
+  const str = await generateTemplateString.call(this, doc);
+
+  this.fs.write(this.destinationPath(`${hyphen}/index.js`), str);
+};
+
+/**
+ * @this import('../../app/generator').ApiOnCallingGenerator 
+ */
+async function normalizeOptions() {
   if (!this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]) {
     this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG] = config.paths.template.prettierConfig;
   }
@@ -35,11 +44,17 @@ module.exports = async function (doc) {
   if (!this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST]) {
     this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST] = await readFile(config.paths.template.keywordRequest, 'utf-8');
   }
+}
 
-  // ---------------------------------------------------------------
+/**
+ * @this import('../../app/generator').ApiOnCallingGenerator
+ * @param {object} doc - openapi schema doc
+ * @returns {string}
+ */
+async function generateTemplateString(doc) {
   const result = template({ doc, service: this.options.service });
   const apiContent = JSON.stringify(result.api, null, 2);
-  
+
   const templateStr = await readFile(config.paths.template.index, 'utf-8');
 
   let str = ejs.compile(templateStr)({
@@ -55,10 +70,10 @@ module.exports = async function (doc) {
     .replace(regTemplateSignEnd, '');
 
   // prettier
-  // ---------------------------------------------------------------
+  // ----------------------
   const prettierConfig = require(this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]);
 
   str = prettier.format(str, prettierConfig);
 
-  this.fs.write(this.destinationPath(`${hyphen}/index.js`), str);
-};
+  return str;
+}

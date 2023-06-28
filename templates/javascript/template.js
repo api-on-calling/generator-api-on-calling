@@ -1,6 +1,7 @@
 'use strict';
 
 const { buildObjectByPathname } = require('../../common/doc');
+const jsdocParameters = require('./jsdoc/parameters.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -95,22 +96,31 @@ function getServiceTemplateString(options) {
   // comments
   // ----------------------------------------
   stack.push('/**');
-  stack.push(`* - request: ${getServiceTemplateKey({ pathname, method })}`);
-
-  if (service.tags) {
-    stack.push(`* - tags: ${service.tags.join(',')}`);
-  }
-
+  
   if (service.summary) {
-    stack.push(`* @summary ${service.summary.replace(/\n/g, '\n * ')}`);
+    stack.push(`* ${service.summary.replace(/\n/g, '\n * ')}`);
   }
 
   if (service.description) {
     stack.push(`* @description ${service.description.replace(/\n/g, '\n * ')}`);
   }
 
+  stack.push(`* - request: ${getServiceTemplateKey({ pathname, method })}`);
+
+  if (service.tags) {
+    stack.push(`* - tags: ${service.tags.join(',')}`);
+  }
+
   if (service.externalDoc) {
     stack.push(`* @see {@link ${service.externalDoc.url}} ${service.externalDoc.description}`);
+  }
+
+  stack.push(`* @param {object} options`);
+
+  if (Array.isArray(service.parameters)) {
+    const stackParameters = jsdocParameters(service.parameters).map((param) => `* ${param}`);
+
+    stack.push(...stackParameters);
   }
 
   stack.push(`*/`);
