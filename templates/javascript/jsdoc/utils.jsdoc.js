@@ -21,7 +21,8 @@ exports.getRefSchemaName = (ref) => {
  * @returns {string}
  */
 exports.getSchemaTitle = (schema, isTypeDef = false, prefix) => {
-  const title = prefix + exports.rmSchemaTitleGenericSign(schema.title);
+  // TODO: prefix + title
+  const title = exports.rmSchemaTitleGenericSign(schema.title);
 
   if (!isTypeDef) {
     return exports.resolveTitleByRequired(

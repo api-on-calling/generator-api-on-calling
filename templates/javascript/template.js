@@ -4,6 +4,7 @@ const { buildObjectByPathname } = require('../../common/doc');
 const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
 const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
 const requestBodyJsdoc = require('./jsdoc/request-body.jsdoc');
+const responseBodyJsdoc = require('./jsdoc/response-body.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -141,7 +142,7 @@ function getServiceTemplateString(options) {
 
   // responseBody
   // -------------------
-  const responseBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  const responseBody = responseBodyJsdoc({ service, doc: ctx.doc });
   if (responseBody) {
     stack.push(`* @returns {Promise<${responseBody}>}`);
   }

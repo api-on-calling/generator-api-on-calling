@@ -47,7 +47,8 @@ const schemaTypes = {
 
       const arr = callSchemaTypeHandler({
         ...opts,
-        prefix: `${opts.schema.title}.`,
+        // TODO: prefix not in property
+        // prefix: `${opts.schema.title}.`,
         schema: {
           title: schemaName,
           ...subSchema,

@@ -1,6 +1,10 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.2
+
+- fix: responseBody
+
 ## 0.1.1
 
 + jsdoc requestBody

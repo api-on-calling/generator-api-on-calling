@@ -1,6 +1,6 @@
 'use strict';
 
-const { getRefSchemaName, readObjectValue } = require('./utils.jsdoc');
+const { rmSchemaTitleGenericSign, getRefSchemaName, readObjectValue } = require('./utils.jsdoc');
 
 module.exports = requestBodyJsdoc;
 
@@ -39,5 +39,5 @@ function requestBodyJsdoc(opts) {
     return;
   }
 
-  return getRefSchemaName(schema.$ref);
+  return rmSchemaTitleGenericSign(getRefSchemaName(schema.$ref));
 }
