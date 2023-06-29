@@ -1,9 +1,10 @@
 'use strict';
 
 const { buildObjectByPathname } = require('../../common/doc');
+const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
+const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
+const requestBodyJsdoc = require('./jsdoc/request-body.jsdoc');
 const config = require('./config');
-
-const SERVICE_NAMESPACE = 'service';
 
 module.exports = ApiOnCallingJavaScriptTemplate;
 
@@ -17,14 +18,6 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
    * the api object
    */
   let api = {};
-
-  /**
-   * template request str data
-   * - service: { [pathname#method]: string }
-   */
-  const data = {
-    [SERVICE_NAMESPACE]: {}
-  };
 
   /**
    * the common options of some service
@@ -54,6 +47,8 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     }
   }
 
+  const jsdocTypes = getJsdocTypesComments(ctx.doc);
+
   if (api['']) {
     const baseApi = api[''];
     delete api[''];
@@ -61,13 +56,16 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     api = { ...baseApi, ...api, };
   }
 
-  return { api, data, };
+  return { api, jsdocTypes };
 }
 
 /**
  * the template context
  * @typedef {object} TemplateContext
  * @property {object} doc
+ * @property {object} doc.paths
+ * @property {object} doc.components
+ * @property {object} doc.components.schemas
  * @property {string} service - the service name
  */
 
@@ -91,7 +89,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
  * @returns {string}
  */
 function getServiceTemplateString(options) {
-  const { pathname, method, service } = options;
+  const { pathname, method, service, ctx } = options;
 
   const stack = [];
 
@@ -105,22 +103,47 @@ function getServiceTemplateString(options) {
   // comments
   // ----------------------------------------
   stack.push('/**');
-  stack.push(`* - request: ${getServiceTemplateKey({ pathname, method })}`);
-
-  if (service.tags) {
-    stack.push(`* - tags: ${service.tags.join(',')}`);
-  }
-
+  
   if (service.summary) {
-    stack.push(`* @summary ${service.summary.replace(/\n/g, '\n * ')}`);
+    stack.push(`* ${service.summary.replace(/\n/g, '\n * ')}`);
   }
 
   if (service.description) {
     stack.push(`* @description ${service.description.replace(/\n/g, '\n * ')}`);
   }
 
+  stack.push(`* - request: ${getServiceTemplateKey({ pathname, method })}`);
+
+  if (service.tags) {
+    stack.push(`* - tags: ${service.tags.join(',')}`);
+  }
+
   if (service.externalDoc) {
     stack.push(`* @see {@link ${service.externalDoc.url}} ${service.externalDoc.description}`);
+  }
+
+  stack.push(`* @param {object} options`);
+
+  // parameters: options.path + options.query
+  // -------------------
+  if (Array.isArray(service.parameters)) {
+    const stackParameters = parametersJsdoc(service.parameters).map((param) => `* ${param}`);
+
+    stack.push(...stackParameters);
+  }
+
+  // requestBody: options.body
+  // -------------------
+  const requestBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  if (requestBody) {
+    stack.push(`* @param {${requestBody}} options.body`);
+  }
+
+  // responseBody
+  // -------------------
+  const responseBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  if (responseBody) {
+    stack.push(`* @returns {Promise<${responseBody}>}`);
   }
 
   stack.push(`*/`);
@@ -151,4 +174,30 @@ function getServiceTemplateString(options) {
  */
 function getServiceTemplateKey(options) {
   return `${options.pathname}#${options.method}`;
+}
+
+/**
+ * @param {object} doc 
+ * @returns {string}
+ */
+function getJsdocTypesComments(doc) {
+  /**
+   * comments jsdoc
+   * @type {string[][]}
+   */
+  const stackComponentsSchemas = componentsSchemasJsdoc(doc);
+
+  const str = stackComponentsSchemas.map((stackSchema) => {
+    const arr = [];
+
+    arr.push('/**');
+    for (const line of stackSchema) {
+      arr.push(' * ' + line.trim());  
+    }
+    arr.push(' */');
+
+    return arr.join('\n');
+  }).join('\n\n');
+
+  return str;
 }

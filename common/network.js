@@ -4,6 +4,7 @@ const { request } = require('urllib-next');
 
 /**
  * download the schema by url
+ * - TODO: currently only supports openapi json doc data
  * @param {string} schemaUrl - schema url
  * @returns {object}
  */
