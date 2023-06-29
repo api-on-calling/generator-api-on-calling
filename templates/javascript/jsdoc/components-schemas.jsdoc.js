@@ -1,4 +1,4 @@
-const assert = require('assert');
+const constants = require('./constants.jsdoc');
 const schemaTypes = require('./schema-types.jsdoc');
 const { callSchemaTypeHandler } = require('./utils.jsdoc');
 
@@ -18,10 +18,10 @@ function componentsSchemasJsdoc(doc) {
 
     const arr = callSchemaTypeHandler({
       doc,
+      scope: constants.SCOPE_TYPEDEF,
+      isTypeDef: true,
       schemaTypes,
       schema,
-      inTypeDef: true,
-      isTypeDef: true,
     });
 
     stack.push(arr);
