@@ -13,6 +13,9 @@
     "test": "jest --watch",
     "docs:source": "jsdoc app common templates -p -r -d docs/source"
   },
+  "engines": {
+    "node": ">=14.21.2 <17.0.0"
+  },
   "dependencies": {
     "command-exists": "^1.2.9",
     "ejs": "^3.1.8",
