@@ -3,6 +3,7 @@
 'use strict';
 
 const assert = require('assert');
+const constants = require('./constants.jsdoc');
 
 /**
  * - e.g. #/components/schemas/someSchemaName -> someSchemaName
@@ -16,13 +17,18 @@ exports.getRefSchemaName = (ref) => {
 /**
  * @param {object} schema
  * @param {boolean} [isTypeDef=false]
+ * @param {string} [prefix='']
  * @returns {string}
  */
-exports.getSchemaTitle = (schema, isTypeDef = false) => {
-  const title = exports.rmSchemaTitleGenericSign(schema.title);
+exports.getSchemaTitle = (schema, isTypeDef = false, prefix) => {
+  const title = prefix + exports.rmSchemaTitleGenericSign(schema.title);
 
   if (!isTypeDef) {
-    return exports.resolveTitleByRequired(title, typeof schema.required !== 'boolean' ? true : schema.required);
+    return exports.resolveTitleByRequired(
+      title,
+      typeof schema.required !== 'boolean' ? true : schema.required,
+      schema.default
+    );
   }
 
   return title;
@@ -31,11 +37,12 @@ exports.getSchemaTitle = (schema, isTypeDef = false) => {
 /**
  * @param {string} title
  * @param {boolean} required
+ * @param {any} [defaultVal]
  * @returns {string}
  */
-exports.resolveTitleByRequired = (title, required) => {
+exports.resolveTitleByRequired = (title, required, defaultVal) => {
   if (!required) {
-    return `[${title}]`;
+    return typeof defaultVal !== 'undefined' ? `[${title}=${defaultVal}]` : `[${title}]`;
   }
   return title;
 };
@@ -64,7 +71,7 @@ exports.callSchemaTypeHandler = (opts) => {
   opts.prefix = opts.prefix || '';
   opts.schema = {
     ...opts.schema,
-    title: exports.getSchemaTitle(opts.schema, opts.isTypeDef),
+    title: exports.getSchemaTitle(opts.schema, opts.isTypeDef, opts.prefix),
     description: exports.getSchemaDesc(opts.schema.description || '', opts.isTypeDef),
   };
 
@@ -124,4 +131,11 @@ exports.readObjectValue = (obj, keys, sign = '.') => {
   }
 
   return cur[last];
+};
+
+/**
+ * @param {('typedef' | 'func_params')} scope
+ */
+exports.getScopedSign = (scope) => {
+  return scope === constants.SCOPE_FUNC_PARAMS ? '@param' : '@property';
 };

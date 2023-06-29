@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { getRefSchemaName, getObjectByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
+const { getScopedSign, getRefSchemaName, getObjectByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
 const constants = require('./constants.jsdoc');
 
 const schemaTypes = {
@@ -20,6 +20,8 @@ const schemaTypes = {
       } else {
         stack.push(`@property {object} ${opts.schema.title} ${opts.schema.description}`);
       }
+    } else if (opts.scope === constants.SCOPE_FUNC_PARAMS) {
+      stack.push(`@param {object} ${opts.schema.title} ${opts.schema.description}`);
     }
 
     if (!opts.schema.properties) {
@@ -45,7 +47,7 @@ const schemaTypes = {
 
       const arr = callSchemaTypeHandler({
         ...opts,
-        schemaTypes,
+        prefix: `${opts.schema.title}.`,
         schema: {
           title: schemaName,
           ...subSchema,
@@ -73,11 +75,15 @@ const schemaTypes = {
 
     const itemType = opts.schema.items.$ref ? getRefSchemaName(opts.schema.items.$ref) : opts.schema.items.type;
 
-    if (opts.isTypeDef) {
-      stack.push(`${opts.schema.description}`);
-      stack.push(`@typedef {${itemType}[]} ${opts.schema.title}`);
-    } else {
-      stack.push(`@property {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
+    if (opts.scope === constants.SCOPE_TYPEDEF) {
+      if (opts.isTypeDef) {
+        stack.push(`${opts.schema.description}`);
+        stack.push(`@typedef {${itemType}[]} ${opts.schema.title}`);
+      } else {
+        stack.push(`@property {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
+      }
+    } else if (opts.scope === constants.SCOPE_FUNC_PARAMS) {
+      stack.push(`@param {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
     }
 
     return stack;
@@ -88,7 +94,7 @@ const schemaTypes = {
    * @returns {string[]}
    */
   string(opts) {
-    return [`@property {string} ${opts.schema.title} ${opts.schema.description}`];
+    return [`${getScopedSign(opts.scope)} {string} ${opts.schema.title} ${opts.schema.description}`];
   },
 
   /**
@@ -96,7 +102,7 @@ const schemaTypes = {
    * @returns {string[]}
    */
   integer(opts) {
-    return [`@property {number} ${opts.schema.title} ${opts.schema.description}`];
+    return [`${getScopedSign(opts.scope)} {number} ${opts.schema.title} ${opts.schema.description}`];
   },
 
   /**
@@ -104,7 +110,7 @@ const schemaTypes = {
    * @returns {string[]}
    */
   boolean(opts) {
-    return [`@property {boolean} ${opts.schema.title} ${opts.schema.description}`];
+    return [`${getScopedSign(opts.scope)} {boolean} ${opts.schema.title} ${opts.schema.description}`];
   },
 };
 
