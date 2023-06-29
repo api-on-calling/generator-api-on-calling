@@ -11,7 +11,7 @@ So, it comes to a question: is there an easy and efficient request client, which
 
 It generate frontend api request client according to an openapi shema url.
 
-The generated request api service always got a calling method, and receive the options object argument.
+The generated request api service always got a method called 'calling', and receive the options object argument.
 
 e.g. GET /pets/{petId}:
 
