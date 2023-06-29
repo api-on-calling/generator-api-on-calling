@@ -34,7 +34,7 @@ module.exports = async function (doc) {
 };
 
 /**
- * @this import('../../app/generator').ApiOnCallingGenerator 
+ * @this import('../../app/generator').ApiOnCallingGenerator
  */
 async function normalizeOptions() {
   if (!this.options[config.enums.OptionsKeyEnum.PRETTIER_CONFIG]) {
@@ -42,7 +42,10 @@ async function normalizeOptions() {
   }
 
   if (!this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST]) {
-    this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST] = await readFile(config.paths.template.keywordRequest, 'utf-8');
+    this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST] = await readFile(
+      config.paths.template.keywordRequest,
+      'utf-8'
+    );
   }
 }
 
@@ -60,7 +63,7 @@ async function generateTemplateString(doc) {
   let str = ejs.compile(templateStr)({
     service: this.options.service,
     content: apiContent,
-    keywordRequest: this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST]
+    keywordRequest: this.options[config.enums.OptionsKeyEnum.KEYWORD_REQUEST],
   });
 
   str = str

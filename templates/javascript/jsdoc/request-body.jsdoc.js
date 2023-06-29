@@ -6,7 +6,7 @@ module.exports = requestBodyJsdoc;
 
 /**
  * get requestBody schema
- * @param {object} opts 
+ * @param {object} opts
  * @param {object} opts.service
  * @param {object} opts.doc
  * @returns {string | undefined} - the responseBody type
@@ -38,6 +38,6 @@ function requestBodyJsdoc(opts) {
     // TODO: handling common schema
     return;
   }
-  
+
   return getRefSchemaName(schema.$ref);
 }

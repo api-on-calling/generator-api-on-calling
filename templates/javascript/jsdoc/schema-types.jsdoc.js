@@ -2,7 +2,8 @@
 
 'use strict';
 
-const { getRefSchemaName, getSchemaByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
+const { getRefSchemaName, getObjectByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
+const constants = require('./constants.jsdoc');
 
 const schemaTypes = {
   /**
@@ -12,11 +13,13 @@ const schemaTypes = {
   object(opts) {
     const stack = [];
 
-    if (opts.isTypeDef) {
-      stack.push(`${opts.schema.description}`);
-      stack.push(`@typedef {object} ${opts.schema.title}`);
-    } else {
-      stack.push(`@property {object} ${opts.schema.title} ${opts.schema.description}`);
+    if (opts.scope === constants.SCOPE_TYPEDEF) {
+      if (opts.isTypeDef) {
+        stack.push(`${opts.schema.description}`);
+        stack.push(`@typedef {object} ${opts.schema.title}`);
+      } else {
+        stack.push(`@property {object} ${opts.schema.title} ${opts.schema.description}`);
+      }
     }
 
     if (!opts.schema.properties) {
@@ -32,20 +35,20 @@ const schemaTypes = {
       let subSchema = val;
 
       if (val.$ref) {
-        const refSchema = getSchemaByRef(opts.doc, val.$ref);
+        const refSchema = getObjectByRef(opts.doc, val.$ref);
 
         subSchema = {
           ...refSchema,
-          ...subSchema
+          ...subSchema,
         };
       }
 
       const arr = callSchemaTypeHandler({
         ...opts,
         schemaTypes,
-        schema: { 
-          ...subSchema, 
+        schema: {
           title: schemaName,
+          ...subSchema,
           required: requiredSchemaNames.includes(schemaName),
         },
         isTypeDef: false,
@@ -68,9 +71,7 @@ const schemaTypes = {
       return stack;
     }
 
-    const itemType = opts.schema.items.$ref ? 
-      getRefSchemaName(opts.schema.items.$ref) :
-      opts.schema.items.type;
+    const itemType = opts.schema.items.$ref ? getRefSchemaName(opts.schema.items.$ref) : opts.schema.items.type;
 
     if (opts.isTypeDef) {
       stack.push(`${opts.schema.description}`);

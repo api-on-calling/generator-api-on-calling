@@ -9,7 +9,7 @@ So, it comes to a question: is there an easy and efficient request client, which
 
 ## generator-api-on-calling
 
-It generate frontend api request client according to an openapi shema url.
+It generate frontend api request client according to an openapi shema url(OpenAPI v3.0.3).
 
 The generated request api service always got a method called 'calling', and receive the options object argument.
 
@@ -40,7 +40,7 @@ npm i generator-api-on-calling -g
 
 - enter some frontend project workspace, e.g. hello
 
-- we want the api service name: ApiService
+- say we want the api service name to be ApiService
 
 ```sh
 cd /some/path/to/your/project/hello

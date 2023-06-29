@@ -6,7 +6,7 @@ const assert = require('assert');
 
 /**
  * - e.g. #/components/schemas/someSchemaName -> someSchemaName
- * @param {string} ref 
+ * @param {string} ref
  * @returns {string}
  */
 exports.getRefSchemaName = (ref) => {
@@ -14,23 +14,29 @@ exports.getRefSchemaName = (ref) => {
 };
 
 /**
- * get schema title
- * @param {object} schema 
- * @param {boolean} [isTypeDef=false] 
+ * @param {object} schema
+ * @param {boolean} [isTypeDef=false]
  * @returns {string}
  */
 exports.getSchemaTitle = (schema, isTypeDef = false) => {
   const title = exports.rmSchemaTitleGenericSign(schema.title);
 
-  const isNotRequired = typeof schema.required === 'boolean' && !schema.required;
-
   if (!isTypeDef) {
-    if (isNotRequired) {
-      return `[${title}]`;
-    }
-    return title;
+    return exports.resolveTitleByRequired(title, typeof schema.required !== 'boolean' ? true : schema.required);
   }
 
+  return title;
+};
+
+/**
+ * @param {string} title
+ * @param {boolean} required
+ * @returns {string}
+ */
+exports.resolveTitleByRequired = (title, required) => {
+  if (!required) {
+    return `[${title}]`;
+  }
   return title;
 };
 
@@ -67,7 +73,7 @@ exports.callSchemaTypeHandler = (opts) => {
 
 /**
  * get schema desc
- * @param {string} desc 
+ * @param {string} desc
  * @param {boolean} slash
  * @returns {string}
  */
@@ -85,11 +91,11 @@ exports.getSchemaDesc = (desc, isTypeDef = false) => {
 
 /**
  * get schema by ref
- * @param {object} doc 
+ * @param {object} doc
  * @param {string} ref
  * @returns {any}
  */
-exports.getSchemaByRef = (doc, ref) => {
+exports.getObjectByRef = (doc, ref) => {
   const key = ref.replace(/^#\//, '');
 
   return exports.readObjectValue(doc, key, '/');

@@ -27,7 +27,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     ctx,
     pathname: '',
     method: '',
-    service: null
+    service: null,
   };
 
   for (const pathname of Object.keys(ctx.doc.paths)) {
@@ -53,7 +53,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     const baseApi = api[''];
     delete api[''];
 
-    api = { ...baseApi, ...api, };
+    api = { ...baseApi, ...api };
   }
 
   return { api, jsdocTypes };
@@ -103,7 +103,7 @@ function getServiceTemplateString(options) {
   // comments
   // ----------------------------------------
   stack.push('/**');
-  
+
   if (service.summary) {
     stack.push(`* ${service.summary.replace(/\n/g, '\n * ')}`);
   }
@@ -127,7 +127,7 @@ function getServiceTemplateString(options) {
   // parameters: options.path + options.query
   // -------------------
   if (Array.isArray(service.parameters)) {
-    const stackParameters = parametersJsdoc(service.parameters).map((param) => `* ${param}`);
+    const stackParameters = parametersJsdoc(service.parameters, ctx.doc).map((param) => `* ${param}`);
 
     stack.push(...stackParameters);
   }
@@ -177,7 +177,7 @@ function getServiceTemplateKey(options) {
 }
 
 /**
- * @param {object} doc 
+ * @param {object} doc
  * @returns {string}
  */
 function getJsdocTypesComments(doc) {
@@ -187,17 +187,19 @@ function getJsdocTypesComments(doc) {
    */
   const stackComponentsSchemas = componentsSchemasJsdoc(doc);
 
-  const str = stackComponentsSchemas.map((stackSchema) => {
-    const arr = [];
+  const str = stackComponentsSchemas
+    .map((stackSchema) => {
+      const arr = [];
 
-    arr.push('/**');
-    for (const line of stackSchema) {
-      arr.push(' * ' + line.trim());  
-    }
-    arr.push(' */');
+      arr.push('/**');
+      for (const line of stackSchema) {
+        arr.push(' * ' + line.trim());
+      }
+      arr.push(' */');
 
-    return arr.join('\n');
-  }).join('\n\n');
+      return arr.join('\n');
+    })
+    .join('\n\n');
 
   return str;
 }

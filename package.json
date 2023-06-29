@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "test": "jest --watch",
-    "docs:source": "jsdoc app common templates -p -r -d docs/source"
+    "docs:source": "jsdoc app common templates -p -r -d docs/source",
+    "prettier": "prettier -w \"{app,common,templates}/**/*.js\""
   },
   "engines": {
     "node": ">=14.21.2 <17.0.0"
@@ -20,7 +21,7 @@
     "command-exists": "^1.2.9",
     "ejs": "^3.1.8",
     "mkdirp": "^3.0.1",
-    "prettier": "2.x",
+    "prettier": "2.8.x",
     "urllib-next": "^3.17.1",
     "yaml": "^2.3.1",
     "yeoman-generator": "^5.9.0",

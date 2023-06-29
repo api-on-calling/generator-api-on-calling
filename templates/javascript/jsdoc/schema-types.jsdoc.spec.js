@@ -11,19 +11,19 @@ describe('test schema types', () => {
       title: 'SomeObjectDTO',
       description: 'some obj dto desc',
       required: false,
-      "properties": {
-        "isViewAll": { "type": "integer", "format": "int32" },
-        "list": { "type": "array", "items": { "$ref": "#/components/schemas/InfoResponseDTO" } },
-        "pageNo": { "type": "integer", "format": "int32" },
-        "pageSize": { "type": "integer", "format": "int32" },
-        "total": { "type": "integer", "format": "int64" }
-      }
+      properties: {
+        isViewAll: { type: 'integer', format: 'int32' },
+        list: { type: 'array', items: { $ref: '#/components/schemas/InfoResponseDTO' } },
+        pageNo: { type: 'integer', format: 'int32' },
+        pageSize: { type: 'integer', format: 'int32' },
+        total: { type: 'integer', format: 'int64' },
+      },
     };
 
     const arr = callSchemaTypeHandler({
       schemaTypes,
       schema,
-      isTypeDef: true
+      isTypeDef: true,
     });
     // console.log('arr', arr);
     expect(arr).toBeTruthy();
@@ -37,6 +37,6 @@ describe('test schema types', () => {
 
     // console.log('arr', arr);
 
-    expect(arr).toBeTruthy();    
+    expect(arr).toBeTruthy();
   });
 });

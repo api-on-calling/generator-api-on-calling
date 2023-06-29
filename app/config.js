@@ -8,8 +8,8 @@ module.exports = {
   paths: {
     source: {
       root: pathSourceRoot,
-      templates: join(pathSourceRoot, 'templates')
-    }
+      templates: join(pathSourceRoot, 'templates'),
+    },
   },
   messages: {
     welcome: 'Hello! Welcome coming to the api-on-calling yeoman generator scaffold !',
@@ -30,20 +30,18 @@ module.exports = {
     {
       name: 'service',
       type: 'input',
-      message: 'What\'s the service name ?',
+      message: "What's the service name ?",
     },
     {
       name: 'lang',
       type: 'list',
-      message: 'What\'s the target language of the service ?',
-      choices: [
-        'javascript-axios'
-      ]
+      message: "What's the target language of the service ?",
+      choices: ['javascript-axios'],
     },
     {
       name: 'schema-url',
       type: 'input',
-      message: 'What\'s the url of the openapi schema ?'
-    }
-  ]
+      message: "What's the url of the openapi schema ?",
+    },
+  ],
 };
