@@ -20,6 +20,7 @@ function componentsSchemasJsdoc(doc) {
       doc,
       schemaTypes,
       schema,
+      inTypeDef: true,
       isTypeDef: true,
     });
 

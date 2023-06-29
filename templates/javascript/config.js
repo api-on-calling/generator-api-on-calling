@@ -4,7 +4,9 @@ const { join } = require('path');
 
 const OptionsKeyEnum = {
   KEYWORD_REQUEST: 'javascript-keyword-request',
-  PRETTIER_CONFIG: 'javascript-prettier-config'
+  PRETTIER_CONFIG: 'javascript-prettier-config',
+  // TODO: frontend request client response dto
+  RESPONSE_DTO: 'javascript-response-dto',
 };
 
 const TemplateSignEnum = {
@@ -36,6 +38,6 @@ module.exports = {
       type: 'input',
       message: 'What\'s the prettier config ? (use default)',
       required: false
-    }
+    },
   ]
 };

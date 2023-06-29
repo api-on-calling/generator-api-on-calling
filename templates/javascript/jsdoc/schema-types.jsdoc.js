@@ -2,8 +2,7 @@
 
 'use strict';
 
-const assert = require('assert');
-const { getRefSchemaName, getSchemaDesc, getSchemaByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
+const { getRefSchemaName, getSchemaByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
 
 const schemaTypes = {
   /**

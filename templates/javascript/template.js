@@ -3,6 +3,7 @@
 const { buildObjectByPathname } = require('../../common/doc');
 const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
 const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
+const requestBodyJsdoc = require('./jsdoc/request-body.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -88,7 +89,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
  * @returns {string}
  */
 function getServiceTemplateString(options) {
-  const { pathname, method, service } = options;
+  const { pathname, method, service, ctx } = options;
 
   const stack = [];
 
@@ -123,10 +124,26 @@ function getServiceTemplateString(options) {
 
   stack.push(`* @param {object} options`);
 
+  // parameters: options.path + options.query
+  // -------------------
   if (Array.isArray(service.parameters)) {
     const stackParameters = parametersJsdoc(service.parameters).map((param) => `* ${param}`);
 
     stack.push(...stackParameters);
+  }
+
+  // requestBody: options.body
+  // -------------------
+  const requestBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  if (requestBody) {
+    stack.push(`* @param {${requestBody}} options.body`);
+  }
+
+  // responseBody
+  // -------------------
+  const responseBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  if (responseBody) {
+    stack.push(`* @returns {Promise<${responseBody}>}`);
   }
 
   stack.push(`*/`);
