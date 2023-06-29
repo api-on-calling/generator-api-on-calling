@@ -1,9 +1,17 @@
 generator-api-on-calling
 ---
 
-Generate frontend api request client according to an openapi shema url.
+API is crucial to the business when developing softwares.
 
-The generated request api service always got a calling method, and its receive the options object argument.
+Many companies happen to feel it is not easy to manage various kinds of api when the number of the apis grow up.
+
+So, it comes to a question: is there an easy and efficient request client, which can be auto generated according to some special kind of openapi schema data ?
+
+## generator-api-on-calling
+
+It generate frontend api request client according to an openapi shema url.
+
+The generated request api service always got a calling method, and receive the options object argument.
 
 e.g. GET /pets/{petId}:
 
@@ -54,7 +62,11 @@ e.g. ApiService, UserService, AuthService, ProfileService ...etc.
 
 3. schema-url
 
-the shcema url, an http request url, and now only *.json* format suffix is supported
+the shcema url, an http request url which can be requested by GET .
+
+- suppported data format: json
+
+- supported openapi version: v3.0.3
 
 ---
 
