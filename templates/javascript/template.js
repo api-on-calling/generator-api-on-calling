@@ -1,7 +1,8 @@
 'use strict';
 
 const { buildObjectByPathname } = require('../../common/doc');
-const jsdocParameters = require('./jsdoc/parameters.jsdoc');
+const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
+const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -45,6 +46,8 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     }
   }
 
+  const jsdocTypes = getJsdocTypesComments(ctx.doc);
+
   if (api['']) {
     const baseApi = api[''];
     delete api[''];
@@ -52,13 +55,16 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     api = { ...baseApi, ...api, };
   }
 
-  return { api };
+  return { api, jsdocTypes };
 }
 
 /**
  * the template context
  * @typedef {object} TemplateContext
  * @property {object} doc
+ * @property {object} doc.paths
+ * @property {object} doc.components
+ * @property {object} doc.components.schemas
  * @property {string} service - the service name
  */
 
@@ -118,7 +124,7 @@ function getServiceTemplateString(options) {
   stack.push(`* @param {object} options`);
 
   if (Array.isArray(service.parameters)) {
-    const stackParameters = jsdocParameters(service.parameters).map((param) => `* ${param}`);
+    const stackParameters = parametersJsdoc(service.parameters).map((param) => `* ${param}`);
 
     stack.push(...stackParameters);
   }
@@ -151,4 +157,30 @@ function getServiceTemplateString(options) {
  */
 function getServiceTemplateKey(options) {
   return `${options.pathname}#${options.method}`;
+}
+
+/**
+ * @param {object} doc 
+ * @returns {string}
+ */
+function getJsdocTypesComments(doc) {
+  /**
+   * comments jsdoc
+   * @type {string[][]}
+   */
+  const stackComponentsSchemas = componentsSchemasJsdoc(doc);
+
+  const str = stackComponentsSchemas.map((stackSchema) => {
+    const arr = [];
+
+    arr.push('/**');
+    for (const line of stackSchema) {
+      arr.push(' * ' + line.trim());  
+    }
+    arr.push(' */');
+
+    return arr.join('\n');
+  }).join('\n\n');
+
+  return str;
 }

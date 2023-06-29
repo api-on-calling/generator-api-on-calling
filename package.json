@@ -10,6 +10,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
+    "test": "jest --watch",
     "docs:source": "jsdoc app common templates -p -r -d docs/source"
   },
   "dependencies": {
@@ -23,10 +24,15 @@
     "yosay": "^2.0.2"
   },
   "devDependencies": {
+    "@jest/globals": "29.3.1",
     "@types/command-exists": "^1.2.0",
+    "@types/jest": "^27.0.3",
     "@types/mkdirp": "^2.0.0",
+    "@types/node": "16.x",
     "@types/yeoman-generator": "^5.2.11",
     "@types/yosay": "^2.0.1",
+    "jest": "29.3.1",
+    "jest-watch-typeahead": "^2.2.1",
     "jsonschema": "^1.4.1"
   },
   "license": "MIT",

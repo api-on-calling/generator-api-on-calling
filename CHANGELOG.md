@@ -1,6 +1,10 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.1(pending)
+
++ jsdoc types comments
+
 ## 0.1.0
 
 + parameters jsdoc

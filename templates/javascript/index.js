@@ -75,5 +75,7 @@ async function generateTemplateString(doc) {
 
   str = prettier.format(str, prettierConfig);
 
+  str += '\n\n' + result.jsdocTypes;
+
   return str;
 }
