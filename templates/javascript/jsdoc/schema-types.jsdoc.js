@@ -2,7 +2,14 @@
 
 'use strict';
 
-const { getScopedSign, getRefSchemaName, getObjectByRef, callSchemaTypeHandler } = require('./utils.jsdoc');
+const {
+  getScopedSign,
+  getRefSchemaName,
+  getObjectByRef,
+  callSchemaTypeHandler,
+  getSchemaDesc,
+  getSchemaTitle,
+} = require('./utils.jsdoc');
 const constants = require('./constants.jsdoc');
 
 const schemaTypes = {
@@ -32,28 +39,24 @@ const schemaTypes = {
     const requiredSchemaNames = Array.isArray(opts.schema.required) ? opts.schema.required : [];
 
     for (const schemaName of Object.keys(opts.schema.properties)) {
-      const val = opts.schema.properties[schemaName];
+      const subSchema = opts.schema.properties[schemaName];
 
-      let subSchema = val;
+      subSchema.title = subSchema.title || schemaName;
+      subSchema.required = requiredSchemaNames.includes(schemaName);
 
-      if (val.$ref) {
-        const refSchema = getObjectByRef(opts.doc, val.$ref);
+      if (subSchema.$ref) {
+        const sign = getScopedSign(opts.scope);
+        const type = getRefSchemaName(subSchema.$ref);
+        const title = getSchemaTitle(subSchema);
+        const desc = getSchemaDesc(subSchema.description || getObjectByRef(opts.doc, subSchema.$ref)?.description);
 
-        subSchema = {
-          ...refSchema,
-          ...subSchema,
-        };
+        stack.push(`${sign} {${type}} ${title} ${desc}`);
+        continue;
       }
 
       const arr = callSchemaTypeHandler({
         ...opts,
-        // TODO: prefix not in property
-        // prefix: `${opts.schema.title}.`,
-        schema: {
-          title: schemaName,
-          ...subSchema,
-          required: requiredSchemaNames.includes(schemaName),
-        },
+        schema: subSchema,
         isTypeDef: false,
       });
 

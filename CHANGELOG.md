@@ -1,6 +1,11 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.3
+
+- fix: response content schema data field
+- fix: generic type name
+
 ## 0.1.2
 
 - fix: responseBody

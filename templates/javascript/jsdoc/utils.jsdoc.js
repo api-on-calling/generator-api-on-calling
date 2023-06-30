@@ -11,18 +11,17 @@ const constants = require('./constants.jsdoc');
  * @returns {string}
  */
 exports.getRefSchemaName = (ref) => {
-  return ref.replace(/[\S\s]+?\/([^/]+)$/, '$1');
+  return exports.rmGenericSign(ref.replace(/[\S\s]+?\/([^/]+)$/, '$1'));
 };
 
 /**
  * @param {object} schema
  * @param {boolean} [isTypeDef=false]
- * @param {string} [prefix='']
  * @returns {string}
  */
-exports.getSchemaTitle = (schema, isTypeDef = false, prefix) => {
+exports.getSchemaTitle = (schema, isTypeDef = false) => {
   // TODO: prefix + title
-  const title = exports.rmSchemaTitleGenericSign(schema.title);
+  const title = exports.rmGenericSign(schema.title);
 
   if (!isTypeDef) {
     return exports.resolveTitleByRequired(
@@ -53,8 +52,9 @@ exports.resolveTitleByRequired = (title, required, defaultVal) => {
  * @param {string} title - the schema title
  * @returns {string}
  */
-exports.rmSchemaTitleGenericSign = (title) => {
-  return (title || '').replace(/«|»/g, '');
+exports.rmGenericSign = (title) => {
+  // return (title || '').replace(/«[^»,]+,[^»,]+»/g, '').replace(/«|»/g, '');
+  return (title || '').replace(/«/g, '__').replace(/»/g, '').replace(/,/g, '_');
 };
 
 /**
