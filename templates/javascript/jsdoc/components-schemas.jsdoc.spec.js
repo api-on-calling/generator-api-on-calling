@@ -1,3 +1,5 @@
+'use strict';
+
 const { expect, test } = require('@jest/globals');
 
 describe('hello world 1', () => {

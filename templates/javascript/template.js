@@ -5,6 +5,7 @@ const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
 const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
 const requestBodyJsdoc = require('./jsdoc/request-body.jsdoc');
 const responseBodyJsdoc = require('./jsdoc/response-body.jsdoc');
+const constantsJsdoc = require('./jsdoc/constants.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -123,7 +124,7 @@ function getServiceTemplateString(options) {
     stack.push(`* @see {@link ${service.externalDoc.url}} ${service.externalDoc.description}`);
   }
 
-  stack.push(`* @param {object} options`);
+  stack.push(`* @param {object} ${constantsJsdoc.API_ON_CALLING_OPTIONS}`);
 
   // parameters: options.path + options.query
   // -------------------
@@ -137,7 +138,7 @@ function getServiceTemplateString(options) {
   // -------------------
   const requestBody = requestBodyJsdoc({ service, doc: ctx.doc });
   if (requestBody) {
-    stack.push(`* @param {${requestBody}} options.body`);
+    stack.push(`* @param {${requestBody}} ${constantsJsdoc.API_ON_CALLING_OPTIONS}.body`);
   }
 
   // responseBody

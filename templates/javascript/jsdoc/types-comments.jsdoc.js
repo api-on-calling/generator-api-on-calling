@@ -13,7 +13,7 @@
  * @property {string} [schema.allOf]
  * @property {string} [schema.description]
  * @property {string} [schema.ref]
- * @property {object} [schema.items]
+ * @property {ApiSchema} [schema.items]
  * @property {string[]} [schema.required]
  * @property {object} [schema.properties]
  */

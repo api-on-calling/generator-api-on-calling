@@ -1,3 +1,5 @@
+'use strict';
+
 const constants = require('./constants.jsdoc');
 const schemaTypes = require('./schema-types.jsdoc');
 const { callSchemaTypeHandler } = require('./utils.jsdoc');

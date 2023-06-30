@@ -160,12 +160,28 @@ exports.getBodySchemaType = (schema) => {
       return exports.rmGenericSign(exports.getRefSchemaName(schema.items.$ref)) + '[]';
     }
 
-    if (schema.items.enum) {
-      return `(${schema.items.enum.join('|')})`;
+    if (exports.isEnumType(schema.items)) {
+      return exports.getEnumType(schema.items);
     }
 
     return schema.items.type + '[]';
   }
 
   return schema.type;
+};
+
+/**
+ * @param {ApiSchema} schema
+ * @returns {string}
+ */
+exports.getEnumType = (schema) => {
+  return '(' + (schema.type !== 'string' ? schema.enum.join(' | ') : "'" + schema.enum.join("' | '") + "'") + ')';
+};
+
+/**
+ * @param {ApiSchema} schema
+ * @returns {boolean}
+ */
+exports.isEnumType = (schema) => {
+  return schema && Array.isArray(schema.enum) && schema.enum.length > 0;
 };

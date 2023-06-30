@@ -1,3 +1,5 @@
+'use strict';
+
 const { expect, test } = require('@jest/globals');
 const { callSchemaTypeHandler } = require('./utils.jsdoc');
 const componentsSchemas = require('./components-schemas.jsdoc');
