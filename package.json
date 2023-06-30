@@ -1,6 +1,6 @@
 {
   "name": "generator-api-on-calling",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "generate frontend api request client according to an openapi shema url",
   "main": "app/index.js",
   "files": [

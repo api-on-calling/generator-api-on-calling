@@ -1,6 +1,12 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.5
+
+- enum types handler
+- constants: options
+- examples
+
 ## 0.1.4
 
 - SchemaHandlerOptions: + scopes, - scope
