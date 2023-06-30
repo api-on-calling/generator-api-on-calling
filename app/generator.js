@@ -68,10 +68,7 @@ class ApiOnCallingGenerator extends Generator {
 
       const doc = await downloadSchema(this.options['schema-url']);
 
-      assert.ok(
-        !!doc && typeof doc === 'object',
-        `schema-url: ${this.options['schema-url']} - no doc object`
-      );
+      assert.ok(!!doc && typeof doc === 'object', `schema-url: ${this.options['schema-url']} - no doc object`);
 
       await lang.call(this, doc);
     } catch (err) {
@@ -81,6 +78,6 @@ class ApiOnCallingGenerator extends Generator {
   }
 
   // install() { this.log('install step'); }
-};
+}
 
 exports.ApiOnCallingGenerator = ApiOnCallingGenerator;

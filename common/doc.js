@@ -63,19 +63,22 @@ function getAlphabetUpperCase(s, $1) {
  * @returns {string[]}
  */
 exports.getPathnameKeys = (pathname) => {
-  return pathname.replace(/^\/+/, '').split('/').map((key) => {
-    // {yyy} -> $yyy
-    if (regCommonParam.test(key)) {
-      return '$' + key.replace(regCommonParam, '$1');
-    }
+  return pathname
+    .replace(/^\/+/, '')
+    .split('/')
+    .map((key) => {
+      // {yyy} -> $yyy
+      if (regCommonParam.test(key)) {
+        return '$' + key.replace(regCommonParam, '$1');
+      }
 
-    // {a---bcd} -> {aBcd}
-    if (regSpecialParam.test(key)) {
-      return '$' + key.replace(regSlashWordGlobal, getAlphabetUpperCase);
-    }
+      // {a---bcd} -> {aBcd}
+      if (regSpecialParam.test(key)) {
+        return '$' + key.replace(regSlashWordGlobal, getAlphabetUpperCase);
+      }
 
-    return key;
-  });
+      return key;
+    });
 };
 
 /**

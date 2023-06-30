@@ -3,10 +3,11 @@
 'use strict';
 
 const assert = require('assert');
+const constants = require('./constants.jsdoc');
 
 /**
  * - e.g. #/components/schemas/someSchemaName -> someSchemaName
- * @param {string} ref 
+ * @param {string} ref
  * @returns {string}
  */
 exports.getRefSchemaName = (ref) => {
@@ -14,23 +15,36 @@ exports.getRefSchemaName = (ref) => {
 };
 
 /**
- * get schema title
- * @param {object} schema 
- * @param {boolean} [isTypeDef=false] 
+ * @param {object} schema
+ * @param {boolean} [isTypeDef=false]
+ * @param {string} [prefix='']
  * @returns {string}
  */
-exports.getSchemaTitle = (schema, isTypeDef = false) => {
+exports.getSchemaTitle = (schema, isTypeDef = false, prefix) => {
+  // TODO: prefix + title
   const title = exports.rmSchemaTitleGenericSign(schema.title);
 
-  const isNotRequired = typeof schema.required === 'boolean' && !schema.required;
-
   if (!isTypeDef) {
-    if (isNotRequired) {
-      return `[${title}]`;
-    }
-    return title;
+    return exports.resolveTitleByRequired(
+      title,
+      typeof schema.required !== 'boolean' ? true : schema.required,
+      schema.default
+    );
   }
 
+  return title;
+};
+
+/**
+ * @param {string} title
+ * @param {boolean} required
+ * @param {any} [defaultVal]
+ * @returns {string}
+ */
+exports.resolveTitleByRequired = (title, required, defaultVal) => {
+  if (!required) {
+    return typeof defaultVal !== 'undefined' ? `[${title}=${defaultVal}]` : `[${title}]`;
+  }
   return title;
 };
 
@@ -58,7 +72,7 @@ exports.callSchemaTypeHandler = (opts) => {
   opts.prefix = opts.prefix || '';
   opts.schema = {
     ...opts.schema,
-    title: exports.getSchemaTitle(opts.schema, opts.isTypeDef),
+    title: exports.getSchemaTitle(opts.schema, opts.isTypeDef, opts.prefix),
     description: exports.getSchemaDesc(opts.schema.description || '', opts.isTypeDef),
   };
 
@@ -67,7 +81,7 @@ exports.callSchemaTypeHandler = (opts) => {
 
 /**
  * get schema desc
- * @param {string} desc 
+ * @param {string} desc
  * @param {boolean} slash
  * @returns {string}
  */
@@ -85,11 +99,11 @@ exports.getSchemaDesc = (desc, isTypeDef = false) => {
 
 /**
  * get schema by ref
- * @param {object} doc 
+ * @param {object} doc
  * @param {string} ref
  * @returns {any}
  */
-exports.getSchemaByRef = (doc, ref) => {
+exports.getObjectByRef = (doc, ref) => {
   const key = ref.replace(/^#\//, '');
 
   return exports.readObjectValue(doc, key, '/');
@@ -118,4 +132,11 @@ exports.readObjectValue = (obj, keys, sign = '.') => {
   }
 
   return cur[last];
+};
+
+/**
+ * @param {('typedef' | 'func_params')} scope
+ */
+exports.getScopedSign = (scope) => {
+  return scope === constants.SCOPE_FUNC_PARAMS ? '@param' : '@property';
 };

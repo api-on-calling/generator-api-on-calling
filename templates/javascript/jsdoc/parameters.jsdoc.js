@@ -1,35 +1,43 @@
+/// <reference path="./types-comments.jsdoc.js" />
+
+const { getObjectByRef } = require('./utils.jsdoc');
 
 module.exports = jsdocParameters;
 
 /**
- * @param {object[]} parameters
- * @param {string} parameters[].name
- * @param {string} parameters[].description
- * @param {('path' | 'query')} parameters[].in
- * @param {boolean} parameters[].required
- * @param {object} parameters[].schema
- * @param {('string' | 'boolean' | 'integer')} parameters[].schema.type
- * @param {string[] | number[]} [parameters[].schema.enum]
+ * @param {OpenapiV303Parameter[]} parameters
+ * @param {OpenapiV303Document} doc
  * @returns {string[]}
  */
-function jsdocParameters(parameters) {
+function jsdocParameters(parameters, doc) {
   const stack = [];
 
-  stack.push(...parseParameters(parameters, 'path'));
-  stack.push(...parseParameters(parameters, 'query'));
+  stack.push(...parseParameters(parameters, 'path', doc));
+  stack.push(...parseParameters(parameters, 'query', doc));
 
   return stack.map((param) => '@param ' + param);
 }
 
 /**
  * @param {object[]} parameters
- * @param {('path'|'query')} type 
+ * @param {('path'|'query')} type
+ * @param {OpenapiV303Document} doc
  * @returns {string[]}
  */
-function parseParameters(parameters, type) {
+function parseParameters(parameters, type, doc) {
   const stack = [];
 
-  const arr = parameters.filter((item) => item.in === type);
+  const arr = parameters
+    .map((param) => {
+      if (!param.$ref) {
+        return param;
+      }
+
+      const paramRef = getObjectByRef(doc, param.$ref);
+
+      return { ...paramRef, ...param };
+    })
+    .filter((param) => param.in === type);
 
   if (!arr.length) {
     return stack;
@@ -50,8 +58,8 @@ function parseParameters(parameters, type) {
 
 /**
  * parse single param
- * @param {string} prefix 
- * @param {object} param 
+ * @param {string} prefix
+ * @param {object} param
  * @returns {string[]}
  */
 function parseSingleParam(prefix, param) {
@@ -76,15 +84,15 @@ function parseSingleParam(prefix, param) {
     switch (param.schema.type) {
       case 'string':
         str += `{string} ${prefixName} - ${param.description}`;
-      break;
+        break;
 
       case 'integer':
         str += `{number} ${prefixName} - ${param.description}`;
-      break;
+        break;
 
       case 'boolean':
         str += `{boolean} ${prefixName} - ${param.description}`;
-      break;
+        break;
     }
   }
 

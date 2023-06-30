@@ -4,6 +4,7 @@ const { buildObjectByPathname } = require('../../common/doc');
 const parametersJsdoc = require('./jsdoc/parameters.jsdoc');
 const componentsSchemasJsdoc = require('./jsdoc/components-schemas.jsdoc');
 const requestBodyJsdoc = require('./jsdoc/request-body.jsdoc');
+const responseBodyJsdoc = require('./jsdoc/response-body.jsdoc');
 const config = require('./config');
 
 module.exports = ApiOnCallingJavaScriptTemplate;
@@ -27,7 +28,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     ctx,
     pathname: '',
     method: '',
-    service: null
+    service: null,
   };
 
   for (const pathname of Object.keys(ctx.doc.paths)) {
@@ -53,7 +54,7 @@ function ApiOnCallingJavaScriptTemplate(ctx) {
     const baseApi = api[''];
     delete api[''];
 
-    api = { ...baseApi, ...api, };
+    api = { ...baseApi, ...api };
   }
 
   return { api, jsdocTypes };
@@ -103,7 +104,7 @@ function getServiceTemplateString(options) {
   // comments
   // ----------------------------------------
   stack.push('/**');
-  
+
   if (service.summary) {
     stack.push(`* ${service.summary.replace(/\n/g, '\n * ')}`);
   }
@@ -127,7 +128,7 @@ function getServiceTemplateString(options) {
   // parameters: options.path + options.query
   // -------------------
   if (Array.isArray(service.parameters)) {
-    const stackParameters = parametersJsdoc(service.parameters).map((param) => `* ${param}`);
+    const stackParameters = parametersJsdoc(service.parameters, ctx.doc).map((param) => `* ${param}`);
 
     stack.push(...stackParameters);
   }
@@ -141,7 +142,7 @@ function getServiceTemplateString(options) {
 
   // responseBody
   // -------------------
-  const responseBody = requestBodyJsdoc({ service, doc: ctx.doc });
+  const responseBody = responseBodyJsdoc({ service, doc: ctx.doc });
   if (responseBody) {
     stack.push(`* @returns {Promise<${responseBody}>}`);
   }
@@ -177,7 +178,7 @@ function getServiceTemplateKey(options) {
 }
 
 /**
- * @param {object} doc 
+ * @param {object} doc
  * @returns {string}
  */
 function getJsdocTypesComments(doc) {
@@ -187,17 +188,19 @@ function getJsdocTypesComments(doc) {
    */
   const stackComponentsSchemas = componentsSchemasJsdoc(doc);
 
-  const str = stackComponentsSchemas.map((stackSchema) => {
-    const arr = [];
+  const str = stackComponentsSchemas
+    .map((stackSchema) => {
+      const arr = [];
 
-    arr.push('/**');
-    for (const line of stackSchema) {
-      arr.push(' * ' + line.trim());  
-    }
-    arr.push(' */');
+      arr.push('/**');
+      for (const line of stackSchema) {
+        arr.push(' * ' + line.trim());
+      }
+      arr.push(' */');
 
-    return arr.join('\n');
-  }).join('\n\n');
+      return arr.join('\n');
+    })
+    .join('\n\n');
 
   return str;
 }
