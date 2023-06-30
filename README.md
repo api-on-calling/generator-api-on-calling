@@ -16,12 +16,22 @@ The generated request api service always got a method called 'calling', and rece
 e.g. GET /pets/{petId}:
 
 ```js
-/**
- * the request options
- */ 
-const requestOptions = {};
+/// <reference path="./examples/3.0-results/uspto-service" />
 
-await ApiService.pets.$petId.get.calling(requestOptions);
+// see ./examples/3.0-results/uspto-service
+import { UsptoService } from './examples/3.0-results/uspto-service';
+
+async function main() {
+  /** @type dataSetList */
+  const result await UsptoService.$dataset.$version.fields.get.calling({
+    path: {
+      dataset: 'SomeDemoDataSet',
+      version: '0.0.1'
+    }
+  });
+}
+
+main();
 ```
 
 1. npm install yeoman globally
