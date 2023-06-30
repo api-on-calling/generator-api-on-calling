@@ -63,11 +63,15 @@ exports.rmGenericSign = (title) => {
  * @returns {string[]}
  */
 exports.callSchemaTypeHandler = (opts) => {
-  const handler = opts.schemaTypes[opts.schema.type];
+  const handler = opts.schema.allOf ? opts.schemaTypes.object : opts.schemaTypes[opts.schema.type];
 
+  if (!handler) {
+    console.log('[callSchemaHandler]: error - schema', opts.schema);
+  }
   assert.ok(!!handler, `[callSchemaHandler]: error - no parser: ${opts.schema.type}`);
   // console.log('callSchemaTypeHandler - opts.schema', opts.schema);
 
+  opts.scopes = opts.scopes || [];
   opts.isTypeDef = opts.isTypeDef || false;
   opts.prefix = opts.prefix || '';
   opts.schema = {
@@ -139,4 +143,29 @@ exports.readObjectValue = (obj, keys, sign = '.') => {
  */
 exports.getScopedSign = (scope) => {
   return scope === constants.SCOPE_FUNC_PARAMS ? '@param' : '@property';
+};
+
+/**
+ * @param {ApiSchema} schema
+ */
+exports.getBodySchemaType = (schema) => {
+  // object
+  if (schema.$ref) {
+    return exports.rmGenericSign(exports.getRefSchemaName(schema.$ref));
+  }
+
+  // array
+  if (schema.type === 'array') {
+    if (schema.items?.$ref) {
+      return exports.rmGenericSign(exports.getRefSchemaName(schema.items.$ref)) + '[]';
+    }
+
+    if (schema.items.enum) {
+      return `(${schema.items.enum.join('|')})`;
+    }
+
+    return schema.items.type + '[]';
+  }
+
+  return schema.type;
 };

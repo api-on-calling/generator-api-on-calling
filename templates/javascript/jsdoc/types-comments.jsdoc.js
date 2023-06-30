@@ -8,12 +8,14 @@
 
 /**
  * @typedef {object} ApiSchema
- * @property {string} schema.type
  * @property {string} schema.title
- * @property {string} schema.description
- * @property {object} [schema.properties]
+ * @property {string} [schema.type]
+ * @property {string} [schema.allOf]
+ * @property {string} [schema.description]
+ * @property {string} [schema.ref]
  * @property {object} [schema.items]
  * @property {string[]} [schema.required]
+ * @property {object} [schema.properties]
  */
 
 /**
@@ -23,7 +25,7 @@
  * @property {boolean} isTypeDef
  * @property {string} prefix
  * @property {object} doc
- * @property {('typedef' | 'func_params')} scope
+ * @property {string[]} scopes - 'typedef' | 'func_params' | 'obj_in_array'
  */
 
 /**

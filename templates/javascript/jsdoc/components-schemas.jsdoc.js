@@ -13,12 +13,18 @@ module.exports = componentsSchemasJsdoc;
 function componentsSchemasJsdoc(doc) {
   const stack = [];
 
+  if (!doc.components?.schemas) {
+    return stack;
+  }
+
   for (const schemaName of Object.keys(doc.components.schemas)) {
     const schema = doc.components.schemas[schemaName];
 
+    schema.title = schemaName;
+
     const arr = callSchemaTypeHandler({
       doc,
-      scope: constants.SCOPE_TYPEDEF,
+      scopes: [constants.SCOPE_TYPEDEF],
       isTypeDef: true,
       schemaTypes,
       schema,

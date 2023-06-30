@@ -1,6 +1,7 @@
 /// <reference path="./types-comments.jsdoc.js" />
 
 const { getObjectByRef } = require('./utils.jsdoc');
+const constants = require('./constants.jsdoc');
 
 module.exports = jsdocParameters;
 
@@ -46,7 +47,11 @@ function parseParameters(parameters, type, doc) {
   const prefix = `options.${type}`;
 
   for (const param of arr) {
-    stack.push(...parseSingleParam(prefix, param));
+    if (type === constants.PARAM_TYPE_PATH) {
+      param.required = true;
+    }
+
+    stack.push(...parseSingleParam(prefix, param, type));
   }
 
   if (stack.length > 0) {
@@ -79,7 +84,9 @@ function parseSingleParam(prefix, param) {
   let str = '';
 
   if (param.schema.enum) {
-    str += `{(${param.schema.enum.join('|')})} ${prefixName} - ${param.description}`;
+    const enumType =
+      param.schema.type !== 'string' ? param.schema.enum.join(' | ') : "'" + param.schema.enum.join("' | '") + "'";
+    str += `{(${enumType})} ${prefixName} - ${param.description}`;
   } else {
     switch (param.schema.type) {
       case 'string':

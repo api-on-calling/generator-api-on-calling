@@ -1,6 +1,6 @@
 'use strict';
 
-const { rmGenericSign, getRefSchemaName, readObjectValue } = require('./utils.jsdoc');
+const { readObjectValue, getBodySchemaType } = require('./utils.jsdoc');
 
 module.exports = requestBodyJsdoc;
 
@@ -33,11 +33,5 @@ function requestBodyJsdoc(opts) {
     return;
   }
 
-  // assert.ok(schema.$ref, `[requestBodyJsdoc] error: ${opts.service.title} -  responseBody no schema ref`);
-  if (!schema.$ref) {
-    // TODO: handling common schema
-    return;
-  }
-
-  return rmGenericSign(getRefSchemaName(schema.$ref));
+  return getBodySchemaType(schema);
 }

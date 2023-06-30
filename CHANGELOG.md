@@ -1,6 +1,14 @@
 CHANGELOG - generator-api-on-calling
 ---
 
+## 0.1.4
+
+- SchemaHandlerOptions: + scopes, - scope
+- + scope: obj_in_array
+- handle object[] type
+- response body - 200, 201
+- common codes for requestBody and responseBody
+
 ## 0.1.3
 
 - fix: response content schema data field

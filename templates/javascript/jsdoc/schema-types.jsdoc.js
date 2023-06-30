@@ -3,10 +3,10 @@
 'use strict';
 
 const {
+  callSchemaTypeHandler,
   getScopedSign,
   getRefSchemaName,
   getObjectByRef,
-  callSchemaTypeHandler,
   getSchemaDesc,
   getSchemaTitle,
 } = require('./utils.jsdoc');
@@ -20,28 +20,82 @@ const schemaTypes = {
   object(opts) {
     const stack = [];
 
-    if (opts.scope === constants.SCOPE_TYPEDEF) {
-      if (opts.isTypeDef) {
-        stack.push(`${opts.schema.description}`);
-        stack.push(`@typedef {object} ${opts.schema.title}`);
-      } else {
-        stack.push(`@property {object} ${opts.schema.title} ${opts.schema.description}`);
+    let schema = opts.schema;
+
+    if (schema.allOf) {
+      const allOf = schema.allOf;
+
+      schema = {
+        type: 'object',
+        title: schema.title,
+        description: schema.description,
+        required: [],
+        properties: {},
+      };
+
+      for (const item of allOf) {
+        const itemSchema = item.$ref ? getObjectByRef(opts.doc, item.$ref) : item;
+
+        if (!itemSchema) {
+          continue;
+        }
+
+        if (itemSchema.title) {
+          schema.title = itemSchema.title;
+        }
+
+        if (itemSchema.description) {
+          schema.description = itemSchema.description;
+        }
+
+        if (Array.isArray(itemSchema.required)) {
+          for (const key of itemSchema.required) {
+            if (!schema.required.includes(key)) {
+              schema.required.push(key);
+            }
+          }
+        }
+
+        if (itemSchema.properties) {
+          for (const key of Object.keys(itemSchema.properties)) {
+            schema.properties[key] = itemSchema.properties[key];
+          }
+        }
       }
-    } else if (opts.scope === constants.SCOPE_FUNC_PARAMS) {
-      stack.push(`@param {object} ${opts.schema.title} ${opts.schema.description}`);
     }
 
-    if (!opts.schema.properties) {
-      // console.log(`[schemaTypes.object] - error: ${opts.schema.title} - no properties`);
+    const schemaType = opts.scopes.includes(constants.SCOPE_OBJ_IN_ARRAY) ? 'object[]' : 'object';
+
+    if (opts.scopes.includes(constants.SCOPE_TYPEDEF)) {
+      if (opts.isTypeDef) {
+        stack.push(`${schema.description}`);
+        stack.push(`@typedef {${schemaType}} ${schema.title}`);
+      } else {
+        stack.push(`@property {${schemaType}} ${schema.title} ${schema.description}`);
+      }
+    } else if (opts.scopes.includes(constants.SCOPE_FUNC_PARAMS)) {
+      stack.push(`@param {${schemaType}} ${schema.title} ${schema.description}`);
+    }
+
+    if (!schema.properties) {
+      // console.log(`[schemaTypes.object] - error: ${schema.title} - no properties`);
       return stack;
     }
 
-    const requiredSchemaNames = Array.isArray(opts.schema.required) ? opts.schema.required : [];
+    const requiredSchemaNames = Array.isArray(schema.required) ? schema.required : [];
 
-    for (const schemaName of Object.keys(opts.schema.properties)) {
-      const subSchema = opts.schema.properties[schemaName];
+    for (const schemaName of Object.keys(schema.properties)) {
+      const subSchema = schema.properties[schemaName];
 
-      subSchema.title = subSchema.title || schemaName;
+      let subSchemaTitle = subSchema.title || schemaName;
+
+      if (opts.scopes.includes(constants.SCOPE_OBJ_IN_ARRAY)) {
+        const parentTitle = opts.schema.title.replace(/^\[|\]$/g, '');
+        subSchemaTitle = subSchemaTitle.replace(/^\[|\]$/g, '');
+        subSchemaTitle = `${parentTitle}[].${subSchemaTitle}`;
+      }
+
+      subSchema.title = subSchemaTitle;
       subSchema.required = requiredSchemaNames.includes(schemaName);
 
       if (subSchema.$ref) {
@@ -79,15 +133,29 @@ const schemaTypes = {
 
     const itemType = opts.schema.items.$ref ? getRefSchemaName(opts.schema.items.$ref) : opts.schema.items.type;
 
-    if (opts.scope === constants.SCOPE_TYPEDEF) {
-      if (opts.isTypeDef) {
-        stack.push(`${opts.schema.description}`);
-        stack.push(`@typedef {${itemType}[]} ${opts.schema.title}`);
-      } else {
-        stack.push(`@property {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
+    if (itemType === 'object') {
+      const stackSubObject = callSchemaTypeHandler({
+        ...opts,
+        schema: {
+          ...opts.schema.items,
+          title: opts.schema.title,
+        },
+        scopes: [constants.SCOPE_TYPEDEF, constants.SCOPE_OBJ_IN_ARRAY],
+        isTypeDef: false,
+      });
+
+      stack.push(...stackSubObject);
+    } else if (opts.scopes) {
+      if (opts.scopes.includes(constants.SCOPE_TYPEDEF)) {
+        if (opts.isTypeDef) {
+          stack.push(`${opts.schema.description}`);
+          stack.push(`@typedef {${itemType}[]} ${opts.schema.title}`);
+        } else {
+          stack.push(`@property {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
+        }
+      } else if (opts.scopes.includes(constants.SCOPE_FUNC_PARAMS)) {
+        stack.push(`@param {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
       }
-    } else if (opts.scope === constants.SCOPE_FUNC_PARAMS) {
-      stack.push(`@param {${itemType}[]} ${opts.schema.title} ${opts.schema.description}`);
     }
 
     return stack;
