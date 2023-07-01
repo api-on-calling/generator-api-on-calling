@@ -20,4 +20,8 @@ And if you follow the rules below, I will make a promise to generate a nice and 
 
 4. always use named class definitions for object, do not define anonymous object type for schema.
 
-5. only *allOf* is supported for object type of json schema, if you must write specal grouped object type for some reason
+5. special json schema object types:
+
+- allOf: supported
+- anyOf: not supported
+- not: not supported
