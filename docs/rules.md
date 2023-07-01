@@ -16,12 +16,15 @@ And if you follow the rules below, I will make a promise to generate a nice and 
 
 2. using *$ref* on request body content schema or response body content schema
 
-3. define all your class schemas on *openapi_document*.schemas.contents
+3. define all your class defination schemas on *openapi_document*.schemas.contents
 
 4. always use named class definitions for object, do not define anonymous object type for schema.
 
 5. special json schema object types:
 
+only occasional situations you might use these types for object json schemas
+
 - allOf: supported
+- oneOf: not supported
 - anyOf: not supported
 - not: not supported
