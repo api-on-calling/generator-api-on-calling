@@ -19,3 +19,5 @@ And if you follow the rules below, I will make a promise to generate a nice and 
 3. define all your class schemas on *openapi_document*.schemas.contents
 
 4. always use named class definitions for object, do not define anonymous object type for schema.
+
+5. only *allOf* is supported for object type of json schema, if you must write specal grouped object type for some reason
